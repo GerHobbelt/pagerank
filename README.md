@@ -71,3 +71,6 @@ the test directory.
 
 Examples from Ian Roger’s site [mirrored here](http://www.cs.princeton.edu/~chazelle/courses/BIB/pagerank.htm) are in the `examples` folder.
 
+![image](https://raw.githubusercontent.com/rdmpage/pagerank/master/examples/pagerank_files/image005.gif)
+
+
