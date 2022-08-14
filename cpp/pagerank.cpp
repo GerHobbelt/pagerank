@@ -42,6 +42,10 @@ using namespace std;
 
 #include "table.h"
 
+#if defined(BUILD_MONOLITHIC)
+#include "monolithic_examples.h"
+#endif
+
 static const char *TRACE_ARG = "-t";
 static const char *NUMERIC_ARG = "-n";
 static const char *ALPHA_ARG = "-a";
@@ -77,6 +81,11 @@ static int check_inc(int i, int max) {
     return i + 1;
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main      pagerank_main
+#endif
+
 int main(int argc, const char **argv) {
 
     Table t;
@@ -94,7 +103,7 @@ int main(int argc, const char **argv) {
             double alpha = strtod(argv[i], &endptr);
             if ((alpha == 0 || alpha > 1) && endptr) {
                 cerr << "Invalid alpha argument" << endl;
-                exit(1);
+                return 1;
             }
             t.set_alpha(alpha);
         } else if (!strcmp(argv[i], CONVERGENCE_ARG)) {
@@ -102,7 +111,7 @@ int main(int argc, const char **argv) {
             double convergence = strtod(argv[i], &endptr);
             if (convergence == 0 && endptr) {
                 cerr << "Invalid convergence argument" << endl;
-                exit(1);
+                return 1;
             }
             t.set_convergence(convergence);
         } else if (!strcmp(argv[i], SIZE_ARG)) {
@@ -110,7 +119,7 @@ int main(int argc, const char **argv) {
             size_t size = strtol(argv[i], &endptr, 10);
             if (size == 0 && endptr) {
                 cerr << "Invalid size argument" << endl;
-                exit(1);
+                return 1;
             }
             t.set_num_rows(size);
         } else if (!strcmp(argv[i], ITER_ARG)) {
@@ -118,7 +127,7 @@ int main(int argc, const char **argv) {
             size_t iterations = strtol(argv[i], &endptr, 10);
             if (iterations == 0 && endptr) {
                 cerr << "Invalid iterations argument" << endl;
-                exit(1);
+                return 1;
             }
             t.set_max_iterations(iterations);
         } else if (!strcmp(argv[i], DELIM_ARG)) {
@@ -128,7 +137,7 @@ int main(int argc, const char **argv) {
             input = argv[i];
         } else {
             usage();
-            exit(1);
+            return 1;
         }
         i++;
     }
@@ -142,12 +151,13 @@ int main(int argc, const char **argv) {
         t.read_file(input);
     }
     end_time = time(NULL);
-    cerr << "IO Time cost: " << ((end_time - start_time) * 1.0 / CLOCK()) << endl;
+    cerr << "IO Time cost: " << difftime(end_time, start_time) << endl;
     cerr << "Calculating pagerank..." << endl;
     start_time = time(NULL);
     t.pagerank();
     end_time = time(NULL);
     cerr << "Done calculating!" << endl;
-    cerr << "Calculation Time cost: " << ((end_time - start_time) * 1.0 / CLOCK()) << endl;
+    cerr << "Calculation Time cost: " << difftime(end_time, start_time) << endl;
     t.print_pagerank_v();
+	return 0;
 }

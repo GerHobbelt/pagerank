@@ -47,18 +47,22 @@
 
 #include "table.h"
 
+#if defined(BUILD_MONOLITHIC)
+#include "monolithic_examples.h"
+#endif
+
 using namespace std;
 
 static const double EPSILON = 0.000001;
 
-static void error(const char *p,const char *p2) {
+static int error(const char *p,const char *p2) {
     cerr << p <<  ' ' << p2 <<  '\n';
-    exit(1);
+    return 1;
 }
 
-static void error(const string p,const string p2) {
+static int error(const string p,const string p2) {
     cerr << p <<  ' ' << p2 <<  '\n';
-    exit(1);
+    return 1;
 }
 
 static void usage() {
@@ -66,6 +70,11 @@ static void usage() {
          << " -j use Java test results" << endl
          << " -p use Python test results (default)" << endl;
 }
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main      pagerank_test_main
+#endif
 
 int main(int argc, const char **argv) {
 
@@ -82,20 +91,20 @@ int main(int argc, const char **argv) {
             python_test = true;
         } else {
             usage();
-            exit(1);
+            return 1;
         } 
     } else if (argc < 2) {
         usage();
-        exit(1);
-    }
+		return 1;
+	}
     
     string tests_filename = argv[argc - 1];
 
     ifstream tests_file(tests_filename.c_str());
 
     if (!tests_file.is_open()) {
-        error("Cannot open file", tests_filename);
-    }
+        return error("Cannot open file", tests_filename);
+	}
 
     cout.precision(numeric_limits<double>::digits10);
     
@@ -118,7 +127,7 @@ int main(int argc, const char **argv) {
         ifstream pagerank_file(pagerank_filename.c_str());
         if (!pagerank_file.is_open()) {
             cerr << endl;
-            error("Cannot open pagerank file", pagerank_filename);
+            return error("Cannot open pagerank file", pagerank_filename);
         }
         cout << "testing against " << pagerank_filename << "... ";
         /* Read graph file */
@@ -178,5 +187,5 @@ int main(int argc, const char **argv) {
             cout << " Failed" << endl;
         }
     }
-    
+	return 0;
 }
