@@ -36,6 +36,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdlib>
+#include <time.h>
 
 using namespace std;
 
@@ -131,16 +132,22 @@ int main(int argc, const char **argv) {
         }
         i++;
     }
-
+    time_t start_time, end_time;
     t.print_params(cerr);
     cerr << "Reading input from " << input << "..." << endl;
+    start_time = time(NULL);
     if (!strcmp(input.c_str(), "stdin")) {
             t.read_file("");
     } else {
         t.read_file(input);
     }
+    end_time = time(NULL);
+    cerr << "IO Time cost: " << ((end_time - start_time) * 1.0 / CLOCK()) << endl;
     cerr << "Calculating pagerank..." << endl;
+    start_time = time(NULL);
     t.pagerank();
+    end_time = time(NULL);
     cerr << "Done calculating!" << endl;
+    cerr << "Calculation Time cost: " << ((end_time - start_time) * 1.0 / CLOCK()) << endl;
     t.print_pagerank_v();
 }

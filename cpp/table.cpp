@@ -45,6 +45,14 @@
 
 #include "table.h"
 
+// Do you want sum of reported pageranks to equal 1 (normalized P) or not? Set to 1 for NOT, 0 for NORMALIZED output.
+#define DONT_NORMALIZE    1
+
+#ifndef DONT_NORMALIZE
+#define DONT_NORMALIZE    0
+#endif
+
+
 void Table::reset() {
     num_outgoing.clear();
     rows.clear();
@@ -307,7 +315,9 @@ void Table::pagerank() {
     
     pr.resize(num_rows);
 
-    pr[0] = 1;
+    for (size_t k = 0; k < pr.size(); k++) {
+        pr[k] = 1;
+    }
 
     if (trace) {
         print_pagerank();
@@ -331,7 +341,11 @@ void Table::pagerank() {
         } else {
             /* Normalize so that we start with sum equal to one */
             for (i = 0; i < pr.size(); i++) {
+#if DONT_NORMALIZE
+                old_pr[i] = pr[i];
+#else
                 old_pr[i] = pr[i] / sum_pr;
+#endif
             }
         }
 
@@ -339,7 +353,9 @@ void Table::pagerank() {
          * After normalisation the elements of the pagerank vector sum
          * to one
          */
+#if !DONT_NORMALIZE
         sum_pr = 1;
+#endif
         
         /* An element of the A x I vector; all elements are identical */
         double one_Av = alpha * dangling_pr / num_rows;
@@ -357,9 +373,11 @@ void Table::pagerank() {
                 double h_v = (num_outgoing[*ci])
                     ? 1.0 / num_outgoing[*ci]
                     : 0.0;
+#if defined(DEBUG)
                 if (num_iterations == 0 && trace) {
                     cout << "h[" << i << "," << *ci << "]=" << h_v << endl;
                 }
+#endif
                 h += h_v * old_pr[*ci];
             }
             h *= alpha;
@@ -372,7 +390,7 @@ void Table::pagerank() {
             print_pagerank();
         }
     }
-    
+    cerr << "Total iterations: " << num_iterations << endl;
 }
 
 const void Table::print_params(ostream& out) {
