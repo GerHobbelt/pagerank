@@ -41,31 +41,33 @@
 #include <cstring>
 
 #include <errno.h>
+#if !defined(_WIN32)
 #include <dirent.h>
+#endif
 
 #include "table.h"
 
 using namespace std;
 
-const double EPSILON = 0.000001;
+static const double EPSILON = 0.000001;
 
-void error(const char *p,const char *p2) {
+static void error(const char *p,const char *p2) {
     cerr << p <<  ' ' << p2 <<  '\n';
     exit(1);
 }
 
-void error(const string p,const string p2) {
+static void error(const string p,const string p2) {
     cerr << p <<  ' ' << p2 <<  '\n';
     exit(1);
 }
 
-void usage() {
+static void usage() {
     cerr << "Usage: pagerank_test [-jp] <test_suite>" << endl
          << " -j use Java test results" << endl
          << " -p use Python test results (default)" << endl;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char **argv) {
 
     Table t;
     bool java_test = false;

@@ -41,15 +41,15 @@ using namespace std;
 
 #include "table.h"
 
-const char *TRACE_ARG = "-t";
-const char *NUMERIC_ARG = "-n";
-const char *ALPHA_ARG = "-a";
-const char *CONVERGENCE_ARG = "-c";
-const char *SIZE_ARG = "-s";
-const char *DELIM_ARG = "-d";
-const char *ITER_ARG = "-m";
+static const char *TRACE_ARG = "-t";
+static const char *NUMERIC_ARG = "-n";
+static const char *ALPHA_ARG = "-a";
+static const char *CONVERGENCE_ARG = "-c";
+static const char *SIZE_ARG = "-s";
+static const char *DELIM_ARG = "-d";
+static const char *ITER_ARG = "-m";
 
-void usage() {
+static void usage() {
     cerr << "pagerank [-tn] [-a alpha ] [-s size] [-d delim] "
          << "[-m max_iterations] <graph_file>" << endl
          << " -t enable tracing " << endl
@@ -68,7 +68,7 @@ void usage() {
          << "    maximum number of iterations to perform" << endl;
 }
 
-int check_inc(int i, int max) {
+static int check_inc(int i, int max) {
     if (i == max) {
         usage();
         exit(1);
@@ -76,7 +76,7 @@ int check_inc(int i, int max) {
     return i + 1;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, const char **argv) {
 
     Table t;
     char *endptr;
